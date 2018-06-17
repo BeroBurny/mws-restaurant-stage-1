@@ -2,6 +2,13 @@ let restaurant;
 var map;
 
 /**
+ * Focus as soon as the page is loaded.
+ */
+document.addEventListener('DOMContentLoaded', (event) => {
+  document.querySelector('#restaurant-address').focus();
+});
+
+/**
  * Initialize Google map, called from HTML.
  */
 window.initMap = () => {
@@ -18,19 +25,19 @@ window.initMap = () => {
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
     }
   });
-}
+};
 
 /**
  * Get current restaurant from page URL.
  */
 fetchRestaurantFromURL = (callback) => {
   if (self.restaurant) { // restaurant already fetched!
-    callback(null, self.restaurant)
+    callback(null, self.restaurant);
     return;
   }
   const id = getParameterByName('id');
   if (!id) { // no id found in URL
-    error = 'No restaurant id in URL'
+    error = 'No restaurant id in URL';
     callback(error, null);
   } else {
     DBHelper.fetchRestaurantById(id, (error, restaurant) => {
@@ -43,7 +50,7 @@ fetchRestaurantFromURL = (callback) => {
       callback(null, restaurant)
     });
   }
-}
+};
 
 /**
  * Create restaurant HTML and add it to the webpage
@@ -56,8 +63,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   address.innerHTML = restaurant.address;
 
   const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img'
+  image.className = 'restaurant-img';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.alt = `${restaurant.name} @ ${restaurant.address}`;
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
@@ -68,7 +76,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   }
   // fill reviews
   fillReviewsHTML();
-}
+};
 
 /**
  * Create restaurant operating hours HTML table and add it to the webpage.
@@ -85,10 +93,18 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
     const time = document.createElement('td');
     time.innerHTML = operatingHours[key];
     row.appendChild(time);
+    const dubleTime = operatingHours[key].split(',')
+    const workTime = dubleTime[0].split('-');
+    let secondWorkTime;
+    if (dubleTime[1]) {
+      secondWorkTime = dubleTime[1].split('-');
+    }
+    const addicitonalWorkTime = dubleTime[1] ? `and from ${secondWorkTime[0]} to ${secondWorkTime[1]}` : '';
+    row.setAttribute('aria-label', `@ ${key} from ${workTime[0]} to ${workTime[1] ? workTime[1] : ''} ${addicitonalWorkTime}.`);
 
     hours.appendChild(row);
   }
-}
+};
 
 /**
  * Create all reviews HTML and add them to the webpage.
@@ -97,25 +113,27 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';
+  title.tabIndex = '6';
   container.appendChild(title);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
+    noReviews.tabIndex = '7';
     container.appendChild(noReviews);
     return;
   }
   const ul = document.getElementById('reviews-list');
-  reviews.forEach(review => {
-    ul.appendChild(createReviewHTML(review));
+  reviews.forEach((review, index) => {
+    ul.appendChild(createReviewHTML(review, index));
   });
   container.appendChild(ul);
-}
+};
 
 /**
  * Create review HTML and add it to the webpage.
  */
-createReviewHTML = (review) => {
+createReviewHTML = (review, index) => {
   const li = document.createElement('li');
   const name = document.createElement('p');
   name.innerHTML = review.name;
@@ -132,9 +150,11 @@ createReviewHTML = (review) => {
   const comments = document.createElement('p');
   comments.innerHTML = review.comments;
   li.appendChild(comments);
+  li.setAttribute('aria-label', `Review from ${review.name} @ date ${review.date} User rating: ${review.rating}.. ${review.comments}.`);
+  li.tabIndex = `${index + 7}`;
 
   return li;
-}
+};
 
 /**
  * Add restaurant name to the breadcrumb navigation menu
