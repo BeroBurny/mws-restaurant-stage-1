@@ -12,8 +12,8 @@ self.addEventListener('install', event => {
         'js/restaurant_info.js',
         'img/',
         'data/restaurants.json',
-      ])).catch(function(error){
-      console.log("Failed to open Cache" + error);
+      ])).catch(error => {
+      console.log('Failed to open Cache \n' + error);
     })
   );
 });
