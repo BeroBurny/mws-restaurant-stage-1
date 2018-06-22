@@ -1,10 +1,10 @@
 let restaurant;
-var map;
+let map;
 
 /**
  * Focus as soon as the page is loaded.
  */
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', event => {
   document.querySelector('#restaurant-address').focus();
 });
 

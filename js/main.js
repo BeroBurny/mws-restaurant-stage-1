@@ -1,8 +1,8 @@
-let restaurants,
-  neighborhoods,
-  cuisines;
-var map;
-var markers = [];
+let restaurants;
+let neighborhoods;
+let cuisines;
+let map;
+let markers = [];
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -11,12 +11,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
   document.querySelector('#filter').focus();
-  // register service worker...
-  if('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./js/sw.js')
-      .then(() => { console.log("Service Worker Registered"); })
-      .catch((error) => {console.log("Service Worker Not registered \n", error );});
-  }
 });
 
 /**

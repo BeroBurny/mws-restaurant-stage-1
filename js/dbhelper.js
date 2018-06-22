@@ -1,4 +1,15 @@
 /**
+ * Register service Worker.
+ */
+document.addEventListener('DOMContentLoaded', event => {
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => { console.log("Service Worker Registered"); })
+      .catch(error => {console.log("Service Worker Not registered! \n", error );});
+  }
+});
+
+/**
  * Common database helper functions.
  */
 class DBHelper {
@@ -7,7 +18,7 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 8000 // Change this to your server port
+    const port = 8000; // Change this to your server port
     return `http://localhost:${port}/data/restaurants.json`;
   }
 
